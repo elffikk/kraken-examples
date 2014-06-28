@@ -3,7 +3,7 @@
  */
 'use strict';
 var mongoose = require('mongoose'),
-    bcrypt = require('bcrypt'),
+    bcrypt = require('bcrypt-nodejs'),
     crypto = require('../lib/crypto');
 
 var userModel = function () {
@@ -26,8 +26,9 @@ var userModel = function () {
                 next();
                 return;
             }
-            //Encrypt it using bCrypt. Using the Sync method instead of Async to keep the code simple.
-            var hashedPwd = bcrypt.hashSync(user.password, crypto.getCryptLevel());
+            //Encrypt it using bcrypt-nodejs. Using the Sync method instead of Async to keep the code simple.
+            var salt = bcrypt.genSaltSync(crypto.getCryptLevel());
+            var hashedPwd = bcrypt.hashSync(user.password, salt);
 
             //Replace the plaintext pw with the Hash+Salted pw;
             user.password = hashedPwd;
